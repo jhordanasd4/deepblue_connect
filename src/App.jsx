@@ -1,74 +1,114 @@
 import React, { useState } from 'react';
-import Arrecife from './components/Arrecife';
 import Login from './components/Login';
-import './App.css'; 
+import Arrecife from './components/Arrecife';
+import Mercado from './components/Mercado'; // NUEVA IMPORTACIÓN
 
-// URL CRÍTICA: La conexión al Backend que debe estar corriendo en otra terminal
-const API_BASE_URL = 'https://deepblue-appi-repo.onrender.com'; // ¡Debe ser esta URL!
+const API_BASE_URL = 'https://deepblue-appi-repo.onrender.com'; // URL Permanente de Render
 
 function App() {
-    // 1. Estados iniciales (isLoggedIn es FALSE por defecto)
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    // Estado para gestionar el usuario autenticado
     const [userData, setUserData] = useState(null);
-    const [loading, setLoading] = useState(false); 
+    // Estado para controlar la visibilidad del Mercado
+    const [mostrarMercado, setMostrarMercado] = useState(false); // NUEVO ESTADO
 
-    // --- FUNCIÓN PARA CARGAR DATOS DEL ARRECIFE ---
-    const fetchUserData = async (userId) => {
-        setLoading(true);
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/arrecife/${userId}`);
-            const result = await response.json();
-            if (result.success) {
-                setUserData(result.data);
-                setIsLoggedIn(true);
-            }
-        } catch (error) {
-            console.error("Error al cargar datos:", error);
-            alert("Error al conectar con la API del Backend. ¿Está corriendo en http://localhost:3000?");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // --- MANEJO DEL LOGIN (POST) ---
+    // 1. Manejo del Login (conexión con la API)
     const handleLogin = async (username, password) => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/login`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify({ username, password }),
             });
-            
-            const result = await response.json();
-            if (result.success) {
-                fetchUserData(result.user_id);
-            } else {
-                alert('Error de login. Usa "demo" / "demo".');
+
+            if (!response.ok) {
+                // Si la respuesta no es 200 (OK), lanza un error con el mensaje de la API
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error desconocido en el servidor.');
             }
+
+            const data = await response.json();
+            // Guarda la información completa del usuario (incluyendo gotas_agua)
+            setUserData(data.user); 
+            // Cierra el mensaje de error si existía
+            return { success: true }; 
+
         } catch (error) {
-             console.error("Error de conexión:", error);
-             alert("No se pudo conectar con el servidor de login. Verifica el Backend.");
+            console.error("Error de autenticación:", error.message);
+            return { success: false, message: error.message };
         }
     };
 
-    // --- SIMULACIÓN DE INTERACCIÓN CRÍTICA (Gana Gotas) ---
+    // 2. Manejo de la acción "Explorar Aguas"
     const handleExplore = () => {
-        if (userData) {
-            setUserData(prevData => ({
-                ...prevData,
-                gotas_agua: prevData.gotas_agua + 10,
-            }));
+        if (!userData) return;
+
+        // Simulación: Aumenta las gotas localmente en 10
+        const newGotas = userData.gotas_agua + 10;
+        
+        // Actualiza el estado del usuario con las nuevas gotas
+        setUserData({ 
+            ...userData, 
+            gotas_agua: newGotas 
+        });
+
+        alert(`¡Exploraste las aguas y ganaste 10 Gotas! Gotas totales: ${newGotas}`);
+    };
+
+    // 3. Manejo de la acción "Comprar Pez" desde el Mercado (NUEVA FUNCIÓN)
+    const handleBuy = (costo, nombrePez) => {
+        if (!userData) return;
+
+        const currentGotas = userData.gotas_agua;
+        if (currentGotas >= costo) {
+            const newGotas = currentGotas - costo;
+            
+            // Actualiza el estado de las gotas
+            setUserData({ 
+                ...userData, 
+                gotas_agua: newGotas 
+            });
+
+            alert(`🎉 ¡Compraste el ${nombrePez}! Gotas restantes: ${newGotas}`);
+            
+            // Cierra el mercado después de la compra exitosa
+            setMostrarMercado(false); 
+
+        } else {
+            alert("¡Gotas insuficientes! Inténtalo de nuevo.");
         }
     };
 
-    // 2. Lógica de renderizado
-    if (!isLoggedIn) {
-        return <Login onLogin={handleLogin} />; // Muestra el Login por defecto
-    }
-    
+    // -------------------------------------------------------------
+    // RENDERIZADO PRINCIPAL
+    // -------------------------------------------------------------
+
     return (
-        <div className="App">
-            <Arrecife userData={userData} onExplore={handleExplore} /> // Muestra el Arrecife
+        <div className="app-container">
+            {userData ? (
+                // Si hay datos de usuario, muestra el Arrecife
+                <>
+                    <Arrecife 
+                        userData={userData}
+                        onExplore={handleExplore}
+                        // Función para abrir el mercado (pasada como prop a Arrecife)
+                        onOpenMarket={() => setMostrarMercado(true)} 
+                    />
+                    
+                    {/* Renderizado Condicional del Mercado */}
+                    {mostrarMercado && (
+                        <Mercado 
+                            userData={userData} 
+                            onBuy={handleBuy} // Función de compra
+                            onClose={() => setMostrarMercado(false)} // Función para cerrar
+                        />
+                    )}
+                </>
+            ) : (
+                // Si no hay datos de usuario, muestra el Login
+                <Login onLogin={handleLogin} />
+            )}
         </div>
     );
 }

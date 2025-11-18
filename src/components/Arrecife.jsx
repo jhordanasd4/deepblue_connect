@@ -1,3 +1,5 @@
+// deepblue-frontend/src/components/Arrecife.jsx
+
 import React from 'react';
 
 // Componente para representar cada objeto en el arrecife
@@ -20,7 +22,8 @@ const ArrecifeItem = ({ item }) => {
     );
 };
 
-const Arrecife = ({ userData, onExplore }) => {
+// Se añade onOpenMarket para manejar el clic del botón Mercado
+const Arrecife = ({ userData, onExplore, onOpenMarket }) => {
     if (!userData) {
         return <div style={{ textAlign: 'center', paddingTop: '50px' }}>Cargando datos del Arrecife...</div>;
     }
@@ -53,7 +56,10 @@ const Arrecife = ({ userData, onExplore }) => {
             {/* -------------------- 3. FOOTER (Navegación) -------------------- */}
             <footer className="footer">
                 <nav>
-                    <button className="nav-button">🛒 Mercado Submarino</button>
+                    {/* El botón ahora usa el prop onOpenMarket */}
+                    <button className="nav-button" onClick={onOpenMarket}>
+                        🛒 Mercado Submarino
+                    </button>
                     <button className="nav-button">📜 Misiones Oceánicas</button>
                     <button className="nav-button">🤝 Comunidad Marina</button>
                 </nav>

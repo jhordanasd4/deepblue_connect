@@ -62,3 +62,72 @@ body {
 .nav-button {
     background: none; border: 1px solid #00aaff; color: #00aaff; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;
 }
+/* Estilos para el Mercado Submarino (Modal) */
+
+.mercado-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegura que esté por encima de todo */
+}
+
+.mercado-modal {
+    background-color: #001f3f; /* Azul oscuro */
+    color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.mercado-items {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.mercado-item {
+    background-color: #003366;
+    padding: 15px;
+    border-radius: 8px;
+    flex: 1;
+    margin: 0 10px;
+}
+
+.mercado-item button {
+    background-color: #ff8c00; /* Naranja */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.mercado-item button:hover:not(.disabled) {
+    background-color: #cc7000;
+}
+
+.mercado-item button.disabled {
+    background-color: #6c757d; /* Gris para deshabilitado */
+    cursor: not-allowed;
+}
+
+.close-button {
+    background-color: #dc3545; /* Rojo */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
