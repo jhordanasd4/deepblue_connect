@@ -1,35 +1,29 @@
-// deepblue-frontend/src/components/Mercado.jsx
-
 import React from 'react';
 
-const Mercado = ({ gotas, setGotas, onClose }) => {
-  // Función que maneja la compra de un pez
-  const comprarPez = (costo, nombrePez) => {
-    if (gotas >= costo) {
-      // Resta el costo de las gotas
-      setGotas(gotas - costo);
-      alert(`¡Compra exitosa! Has comprado el ${nombrePez}. Te quedan ${gotas - costo} Gotas.`);
-    } else {
-      alert("¡Gotas insuficientes! Necesitas más para comprar este pez.");
-    }
-  };
+// El componente ahora recibe userData (para leer las gotas) y onBuy (para comprar)
+const Mercado = ({ userData, onBuy, onClose }) => {
+  // Accede a las gotas_agua desde el objeto userData
+  const gotasActuales = userData.gotas_agua;
 
   return (
     // Estilo modal para superponerse a la pantalla
     <div className="mercado-overlay">
       <div className="mercado-modal">
         <h2>🐟 Mercado Submarino</h2>
-        <p>Tus Gotas actuales: **{gotas}**</p>
+        <p>Tus Gotas actuales: **{gotasActuales}** 💧</p> 
         
         <div className="mercado-items">
+          
           {/* Pez Globo (50 Gotas) */}
           <div className="mercado-item">
             <h3>Pez Globo</h3>
+            mnv 
             <p>Costo: 50 Gotas</p>
             <button 
-              onClick={() => comprarPez(50, 'Pez Globo')} 
-              disabled={gotas < 50}
-              className={gotas < 50 ? 'disabled' : ''}
+              // Llama a la función onBuy que está definida en App.jsx
+              onClick={() => onBuy(50, 'Pez Globo')} 
+              disabled={gotasActuales < 50}
+              className={gotasActuales < 50 ? 'disabled' : ''}
             >
               Comprar
             </button>
@@ -40,9 +34,10 @@ const Mercado = ({ gotas, setGotas, onClose }) => {
             <h3>Pez Martillo</h3>
             <p>Costo: 90 Gotas</p>
             <button 
-              onClick={() => comprarPez(90, 'Pez Martillo')}
-              disabled={gotas < 90}
-              className={gotas < 90 ? 'disabled' : ''}
+              // Llama a la función onBuy que está definida en App.jsx
+              onClick={() => onBuy(90, 'Pez Martillo')}
+              disabled={gotasActuales < 90}
+              className={gotasActuales < 90 ? 'disabled' : ''}
             >
               Comprar
             </button>
