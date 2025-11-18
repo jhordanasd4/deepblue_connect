@@ -4,7 +4,7 @@ import Login from './components/Login';
 import './App.css'; 
 
 // URL CRÍTICA: La conexión al Backend que debe estar corriendo en otra terminal
-const API_BASE_URL = 'https://deepblue-appi-repo.onrender.com'; 
+const API_BASE_URL = 'https://deepblue-appi-repo.onrender.com'; // ¡Debe ser esta URL!
 
 function App() {
     // 1. Estados iniciales (isLoggedIn es FALSE por defecto)
