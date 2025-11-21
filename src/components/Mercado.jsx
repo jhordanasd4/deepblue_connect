@@ -1,47 +1,44 @@
 import React from 'react';
+import marketItems from '../constants/marketItems';
 
-// El componente ahora recibe userData (para leer las gotas) y onBuy (para comprar)
-const Mercado = ({ userData, onBuy, onClose }) => {
-  // Accede a las gotas_agua desde el objeto userData
-  const gotasActuales = userData.gotas_agua;
+// Mercado alineado con App.jsx: usa userData.gotas y llama onBuy con el id del ítem
+const Mercado = ({ userData, onBuy, onClose, onNeedRecharge }) => {
+  const gotasActuales = userData?.gotas ?? 0;
 
   return (
-    // Estilo modal para superponerse a la pantalla
     <div className="mercado-overlay">
       <div className="mercado-modal">
         <h2>🐟 Mercado Submarino</h2>
-        <p>Tus Gotas actuales: **{gotasActuales}** 💧</p> 
-        
-        <div className="mercado-items">
-          
-          {/* Pez Globo (50 Gotas) */}
-          <div className="mercado-item">
-            <h3>Pez Globo</h3>
-            mnv 
-            <p>Costo: 50 Gotas</p>
-            <button 
-              // Llama a la función onBuy que está definida en App.jsx
-              onClick={() => onBuy(50, 'Pez Globo')} 
-              disabled={gotasActuales < 50}
-              className={gotasActuales < 50 ? 'disabled' : ''}
-            >
-              Comprar
-            </button>
-          </div>
+        <p>Tus Gotas actuales: {gotasActuales} 💧</p>
 
-          {/* Pez Martillo (90 Gotas) */}
-          <div className="mercado-item">
-            <h3>Pez Martillo</h3>
-            <p>Costo: 90 Gotas</p>
-            <button 
-              // Llama a la función onBuy que está definida en App.jsx
-              onClick={() => onBuy(90, 'Pez Martillo')}
-              disabled={gotasActuales < 90}
-              className={gotasActuales < 90 ? 'disabled' : ''}
-            >
-              Comprar
-            </button>
-          </div>
+        <div className="mercado-items">
+          {marketItems.map(item => (
+            <div className="mercado-item" key={item.id}>
+              {item.image && (
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  width={320}
+                  height={180}
+                  style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 8, marginBottom: 10 }}
+                  loading="lazy"
+                />
+              )}
+              <h3>{item.name}</h3>
+              <p className="text-sm">{item.description}</p>
+              <p>Costo: {item.cost} Gotas</p>
+              <p>Recompensa: {item.reward}</p>
+              {gotasActuales < item.cost ? (
+                <button onClick={() => onNeedRecharge?.(item)} className={'disabled'}>
+                  Faltan {item.cost - gotasActuales} Gotas — Recargar
+                </button>
+              ) : (
+                <button onClick={() => onBuy(item.id)}>
+                  Comprar
+                </button>
+              )}
+            </div>
+          ))}
         </div>
 
         <button className="close-button" onClick={onClose}>Cerrar Mercado</button>
