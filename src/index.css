@@ -26,9 +26,20 @@ body {
 }
 
 #root {
-  max-width: 1280px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0;
   text-align: center;
-  width: 100%; /* Asegura que el root tome el 100% del ancho */
+  width: 100%;
+}
+
+/* Remove padding on mobile */
+@media (max-width: 768px) {
+  body {
+    padding: 0;
+  }
+  
+  #root {
+    padding: 0;
+  }
 }
